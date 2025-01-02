@@ -1,0 +1,30 @@
+{
+  "name": "Sort chatgpt chats",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": ["https://chatgpt.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_end",
+      "css": ["styles.css"]
+    }
+  ],
+  "icons": {
+    "16": "icon.png",
+    "32": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "action": {
+    "default_title": "Sort chatgpt chats",
+    "default_icon": {
+        "16": "icon.png",
+        "32": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+    }
+}
+}

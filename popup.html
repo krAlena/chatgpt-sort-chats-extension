@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Warning: Suspicious Certificate</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Warning: Suspicious Certificate</h1>
+    <p>This site's SSL certificate was issued less than <span id="days"></span> days ago. It might be a phishing attempt.</p>
+    <button id="proceed">Proceed Anyway</button>
+    <button id="back">Go Back</button>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const originalUrl = urlParams.get('originalUrl');
+    const days = urlParams.get('days');
+    document.getElementById('days').textContent = days;
+
+    document.getElementById('proceed').addEventListener('click', () => {
+      chrome.runtime.sendMessage({ action: 'allowSite', site: new URL(originalUrl).hostname }, () => {
+        window.location.href = originalUrl; // Proceed to the original URL
+      });
+    });
+
+    document.getElementById('back').addEventListener('click', () => {
+      window.history.back(); // Go back to the previous page
+    });
+  </script>
+</body>
+</html>
