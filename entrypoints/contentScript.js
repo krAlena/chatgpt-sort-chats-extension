@@ -29,12 +29,12 @@ function handleChatsListScroll(){
     if (scrollableList){
       scrollableList.addEventListener("scroll", function () {
         let spinnerElem = document.querySelector(`${parentSelector} ${spinnerSelector}`)
-          let isSpinnerVisible = (spinnerElem != null);
-          if (isSpinnerVisible && !isChatsObserverWorking){
-            // resort last chats group
-            indexCurrentOl -= 1;
-            startSmallerObserver();
-          }
+        let isSpinnerVisible = (spinnerElem != null);
+        if (isSpinnerVisible && !isChatsObserverWorking){
+          // resort last chats group
+          indexCurrentOl -= 1;
+          startSmallerObserver();
+        }
       });
     }
   }
