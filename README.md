@@ -20,11 +20,10 @@ The extension operates without a visual popup. The extension is developed using 
 
 ### Development
 1. Clone the repository:
-git clone [https://github.com/krAlena/chatgpt-sort-chats-extension](https://github.com/krAlena/chatgpt-sort-chats-extension)
-cd web-notes-ext
+- git clone [https://github.com/krAlena/chatgpt-sort-chats-extension](https://github.com/krAlena/chatgpt-sort-chats-extension)
 2. Run in development mode:
-wxt
-(will open the chrome browser automaticly)
+- wxt
+- (will open the chrome browser automaticly)
 
 ### Manual extension installation
 The output files will be located in the ".output" directory.
