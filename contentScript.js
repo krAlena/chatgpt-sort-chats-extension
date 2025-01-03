@@ -1,15 +1,16 @@
 let indexCurrentOl = 0;
 const parentSelector = ".bg-token-sidebar-surface-primary";
+const spinnerSelector = ".animate-spin";
+const chatsGroupForSortSelector = "ol";
 let scrollableList = null;
 let isChatsObserverWorking = false;
 
 // This function is called when the first ol element is found
 const handleFirstOlElement = (observer) => {
-  const targetChild = document.querySelectorAll(`${parentSelector} ol`)[indexCurrentOl];
+  const targetChild = document.querySelectorAll(`${parentSelector} ${chatsGroupForSortSelector}`)[indexCurrentOl];
   if (targetChild) {
     indexCurrentOl += 1;
     sortChats(targetChild); // Your function to sort chats or do something with the targetChild
-    console.log('Target child element found:', targetChild.textContent);
     handleChatsListScroll();
     isChatsObserverWorking = false;
     observer.disconnect(); // Disconnect the initial observer after finding the first ol element
@@ -26,8 +27,7 @@ function handleChatsListScroll(){
     scrollableList =  document.querySelector(`${parentSelector} .overflow-y-auto`);
     if (scrollableList){
       scrollableList.addEventListener("scroll", function () {
-        console.log("scrollableList scroll");
-        let spinnerElem = document.querySelector(`${parentSelector} .animate-spin`)
+        let spinnerElem = document.querySelector(`${parentSelector} ${spinnerSelector}`)
           let isSpinnerVisible = (spinnerElem != null);
           if (isSpinnerVisible && !isChatsObserverWorking){
             // resort last chats group
@@ -60,18 +60,14 @@ const startGlobalObserver = () => {
 // This function starts a second observer to monitor the next ol element in the smaller area
 const startSmallerObserver = () => {
   const smallerObserver = new MutationObserver((mutations) => {
-    console.log(mutations);
     for (let mutation of mutations) {
       if (mutation.type === 'childList') {
-        const nextTargetChild = document.querySelectorAll('.bg-token-sidebar-surface-primary ol')[indexCurrentOl];
+        const nextTargetChild = document.querySelectorAll(`${parentSelector} ${chatsGroupForSortSelector}`)[indexCurrentOl];
         if (nextTargetChild) {
           indexCurrentOl += 1;
           sortChats(nextTargetChild); // Your sorting function for the next targetChild
-          console.log('Next ol element found:', nextTargetChild.textContent);
-
         } else {
-          console.log('No next target child found.');
-          let spinnerElem = document.querySelector(`${parentSelector} .animate-spin`)
+          let spinnerElem = document.querySelector(`${parentSelector} ${spinnerSelector}`)
           let isSpinnerVisible = (spinnerElem != null);
           if (!isSpinnerVisible){
             isChatsObserverWorking = false;
