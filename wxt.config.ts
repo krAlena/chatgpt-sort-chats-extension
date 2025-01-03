@@ -5,6 +5,7 @@ export default defineConfig({
   extensionApi: 'chrome',
   manifest: {
     name: "Sort chatgpt chats",
+    description: "Browser extension script that sorts ChatGPT chats in the left panel alphabetically for easier navigation and better organization.",
     version: "1.0",
     permissions: ["scripting", "activeTab"],
     host_permissions: ["https://chatgpt.com/*"],
