@@ -5,6 +5,7 @@ const chatsGroupForSortSelector = "ol";
 let scrollableList = null;
 let isChatsObserverWorking = false;
 
+export default defineUnlistedScript(() => {
 // This function is called when the first ol element is found
 const handleFirstOlElement = (observer) => {
   const targetChild = document.querySelectorAll(`${parentSelector} ${chatsGroupForSortSelector}`)[indexCurrentOl];
@@ -41,48 +42,56 @@ function handleChatsListScroll(){
 
 // This function starts the first observer
 const startGlobalObserver = () => {
-  const observer = new MutationObserver((mutations) => {
-    console.log(mutations);
-    for (let mutation of mutations) {
-      if (mutation.type === 'childList') {
-        handleFirstOlElement(observer);
-        break; // Exit the loop once the first element is found
+  if (typeof MutationObserver === 'undefined') {
+    // Load a polyfill or handle the lack of support
+  } else {
+    const observer = new MutationObserver((mutations) => {
+      console.log(mutations);
+      for (let mutation of mutations) {
+        if (mutation.type === 'childList') {
+          handleFirstOlElement(observer);
+          break; // Exit the loop once the first element is found
+        }
       }
-    }
-  });
+    });
 
-  // Observe the parent container for child additions
-  const parentContainer = document.body;
-  isChatsObserverWorking = true;
-  observer.observe(parentContainer, { childList: true, subtree: true });
+    // Observe the parent container for child additions
+    const parentContainer = document.body;
+    isChatsObserverWorking = true;
+    observer.observe(parentContainer, { childList: true, subtree: true });
+  }
 };
 
 // This function starts a second observer to monitor the next ol element in the smaller area
 const startSmallerObserver = () => {
-  const smallerObserver = new MutationObserver((mutations) => {
-    for (let mutation of mutations) {
-      if (mutation.type === 'childList') {
-        const nextTargetChild = document.querySelectorAll(`${parentSelector} ${chatsGroupForSortSelector}`)[indexCurrentOl];
-        if (nextTargetChild) {
-          indexCurrentOl += 1;
-          sortChats(nextTargetChild); // Your sorting function for the next targetChild
-        } else {
-          let spinnerElem = document.querySelector(`${parentSelector} ${spinnerSelector}`)
-          let isSpinnerVisible = (spinnerElem != null);
-          if (!isSpinnerVisible){
-            isChatsObserverWorking = false;
-            smallerObserver.disconnect();
+  if (typeof MutationObserver === 'undefined') {
+    // Load a polyfill or handle the lack of support
+  } else {
+    const smallerObserver = new MutationObserver((mutations) => {
+      for (let mutation of mutations) {
+        if (mutation.type === 'childList') {
+          const nextTargetChild = document.querySelectorAll(`${parentSelector} ${chatsGroupForSortSelector}`)[indexCurrentOl];
+          if (nextTargetChild) {
+            indexCurrentOl += 1;
+            sortChats(nextTargetChild); // Your sorting function for the next targetChild
+          } else {
+            let spinnerElem = document.querySelector(`${parentSelector} ${spinnerSelector}`)
+            let isSpinnerVisible = (spinnerElem != null);
+            if (!isSpinnerVisible){
+              isChatsObserverWorking = false;
+              smallerObserver.disconnect();
+            }
           }
         }
       }
-    }
-  });
+    });
 
-  // Observe the smaller parent container for next ol elements
-  const smallerParentContainer = document.querySelector(parentSelector);
-  if (smallerParentContainer) {
-    isChatsObserverWorking = true;
-    smallerObserver.observe(smallerParentContainer, { childList: true, subtree: true });
+    // Observe the smaller parent container for next ol elements
+    const smallerParentContainer = document.querySelector(parentSelector);
+    if (smallerParentContainer) {
+      isChatsObserverWorking = true;
+      smallerObserver.observe(smallerParentContainer, { childList: true, subtree: true });
+    }
   }
 };
 
@@ -100,3 +109,4 @@ function sortChats(chatListToSort) {
   chatListToSort.innerHTML = '';
   items.forEach(item => chatListToSort.appendChild(item));
 }
+})
