@@ -42,6 +42,16 @@
       "128": "icon/128.png"
     }
   },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icon/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
   "commands": {
     "wxt:reload-extension": {
       "description": "Reload the extension during development",

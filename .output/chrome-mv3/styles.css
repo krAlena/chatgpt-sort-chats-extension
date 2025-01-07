@@ -1,14 +1,8 @@
-.my-custom-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
+.sort-icon {
     position: absolute;
-    right: 20px;
     top: 10px;
-    display: none;
-}
-.zA:hover .my-custom-button {
-    display: block;
+    height: 14px;
+    width: 14px;
+    right: 10px;
+    cursor: pointer;
 }

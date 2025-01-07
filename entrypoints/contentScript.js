@@ -1,16 +1,18 @@
-let indexCurrentOl = 0;
+let indexCurrentChatsGroup = 0;
 const parentSelector = ".bg-token-sidebar-surface-primary";
 const spinnerSelector = ".animate-spin";
-const chatsGroupForSortSelector = "ol";
+const chatsGroupSelector = "ol";
+const chatsGroupHeaderSelector = ".sticky.bg-token-sidebar-surface-primary.top-0";
 let scrollableList = null;
 let isChatsObserverWorking = false;
 
 export default defineUnlistedScript(() => {
 // This function is called when the first ol element is found
 const handleFirstOlElement = (observer) => {
-  const targetChild = document.querySelectorAll(`${parentSelector} ${chatsGroupForSortSelector}`)[indexCurrentOl];
+  const targetChild = document.querySelectorAll(`${parentSelector} ${chatsGroupSelector}`)[indexCurrentChatsGroup];
   if (targetChild) {
-    indexCurrentOl += 1;
+    tryToAddSortIcon(indexCurrentChatsGroup);
+    indexCurrentChatsGroup += 1;
     sortChats(targetChild); // Your function to sort chats or do something with the targetChild
     handleChatsListScroll();
     isChatsObserverWorking = false;
@@ -23,6 +25,38 @@ const handleFirstOlElement = (observer) => {
   }
 };
 
+function tryToAddSortIcon(indexGroup){
+  let targetHeader = document.querySelectorAll(`${parentSelector} ${chatsGroupHeaderSelector}`)[indexGroup];
+  if (targetHeader) {
+    let isExistSortIcon = targetHeader.querySelector(".sort-icon");
+    if (!isExistSortIcon){
+      const img = document.createElement("img");
+      img.src = chrome.runtime.getURL("icon/16.png");
+      img.alt = "Sort";
+      img.className = "sort-icon";
+      img.addEventListener('click', () => {
+        toggleGroupSortDirection(indexGroup);
+      });
+
+      targetHeader.appendChild(img);
+    }
+  }
+}
+
+function toggleGroupSortDirection(indexGroup){
+  const groupForSort = document.querySelectorAll(`${parentSelector} ${chatsGroupSelector}`)[indexGroup];
+  if (groupForSort) {
+    let sortIcon = document.querySelectorAll(`${parentSelector} ${chatsGroupHeaderSelector} .sort-icon`)[indexGroup];
+    if (sortIcon) {
+      let newSortDirection = sortIcon.src.includes("desc") ? "asc" : "desc";
+      let sortIconPath = (newSortDirection === "asc") ? "icon/16.png" : "icon/16_desc.png";
+
+      sortIcon.src = chrome.runtime.getURL(sortIconPath);
+      sortChats(groupForSort, newSortDirection);
+    }
+  }
+}
+
 function handleChatsListScroll(){
   if (!scrollableList){
     scrollableList =  document.querySelector(`${parentSelector} .overflow-y-auto`);
@@ -32,7 +66,7 @@ function handleChatsListScroll(){
         let isSpinnerVisible = (spinnerElem != null);
         if (isSpinnerVisible && !isChatsObserverWorking){
           // resort last chats group
-          indexCurrentOl -= 1;
+          indexCurrentChatsGroup -= 1;
           startSmallerObserver();
         }
       });
@@ -70,9 +104,10 @@ const startSmallerObserver = () => {
     const smallerObserver = new MutationObserver((mutations) => {
       for (let mutation of mutations) {
         if (mutation.type === 'childList') {
-          const nextTargetChild = document.querySelectorAll(`${parentSelector} ${chatsGroupForSortSelector}`)[indexCurrentOl];
+          const nextTargetChild = document.querySelectorAll(`${parentSelector} ${chatsGroupSelector}`)[indexCurrentChatsGroup];
           if (nextTargetChild) {
-            indexCurrentOl += 1;
+            tryToAddSortIcon(indexCurrentChatsGroup);
+            indexCurrentChatsGroup += 1;
             sortChats(nextTargetChild); // Your sorting function for the next targetChild
           } else {
             let spinnerElem = document.querySelector(`${parentSelector} ${spinnerSelector}`)
@@ -98,12 +133,17 @@ const startSmallerObserver = () => {
 // Start the first observer with the full area selector
 startGlobalObserver();
 
-function sortChats(chatListToSort) {
+function sortChats(chatListToSort, direction = 'asc') {
   // Get all sidebar items
   const items = Array.from(chatListToSort.children);
 
   // Sort items alphabetically
-  items.sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim()));
+  if (direction === 'asc') {
+    items.sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim()));
+  }
+  else if (direction === 'desc') {
+    items.sort((a, b) => b.textContent.trim().localeCompare(a.textContent.trim()));
+  }
 
   // Reattach sorted items
   chatListToSort.innerHTML = '';
