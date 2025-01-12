@@ -2,7 +2,8 @@
 
 **Chats' sorter**  is a cross-browser extension that automatically sorts chat messages alphabetically. It uses an injected script to trigger sorting when the start page loads or the chat list is scrolled.
 The extension operates without a visual popup. The extension is developed using [WXT](https://github.com/wxt-dev/wxt). This project supports both **Manifest V2** and **Manifest V3**, enabling compatibility across multiple browsers, including Chrome and Firefox.
-![image](https://github.com/user-attachments/assets/56e31b28-1a36-4b36-b860-900f7bdbfbb4)
+
+![image](https://github.com/user-attachments/assets/56e31b28-1a36-4b36-b860-900f7bdbfbb4){width=500px height=500px}
 
 ## Features
 
